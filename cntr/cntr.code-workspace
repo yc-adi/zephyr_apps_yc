@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"terminal.integrated.env.windows": {
+			"Path": "${config:OCD_path};${config:ARM_GCC_path}/bin;${config:xPack_GCC_path}/bin;${config:MSYS_path}/usr/bin;${config:Make_path};${env:PATH}",
+			"MAXIM_PATH": "${config:MAXIM_PATH}"
+		},
+		"terminal.integrated.defaultProfile.windows": "Command Prompt",
+		"terminal.integrated.env.linux": {
+			"PATH": "${config:OCD_path}:${config:ARM_GCC_path}/bin:${config:xPack_GCC_path}/bin:${env:PATH}",
+			"MAXIM_PATH": "${config:MAXIM_PATH}"
+		},
+		"terminal.integrated.env.osx": {
+			"PATH": "${config:OCD_path}/bin:${config:ARM_GCC_path}/bin:${config:xPack_GCC_path}/bin:${env:PATH}",
+			"MAXIM_PATH": "${config:MAXIM_PATH}"
+		},
+		"files.associations": {
+			"stddef.h": "c"
+		}
+	}
+}

@@ -1,0 +1,8 @@
+test/
+
+/**/build
+/**/venv
+/**/.venv
+
+*.bak
+*.log
