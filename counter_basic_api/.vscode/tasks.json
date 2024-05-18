@@ -1,0 +1,184 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+			"label": "West Configurable Build",
+			"type": "shell",
+			"group": {
+				"kind": "build",
+			},
+			"linux": {
+				"command": "${userHome}/zephyrproject/.venv/bin/west"
+			},
+			"windows": {
+				"command": "${userHome}/zephyrproject/.venv/Scripts/west.exe"
+			},
+			"osx": {
+				"command": "${userHome}/zephyrproject/.venv/bin/west"
+			},
+			"args": [
+				"build",
+				"-p",
+				"${input:pristine}",
+				"-b",
+				"${input:board}"
+			],
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+        {
+            "label": "build",
+            "type": "shell",
+            "linux": {
+				"command": "${userHome}/zephyrproject/.venv/bin/west"
+			},
+			"windows": {
+				"command": "${userHome}/zephyrproject/.venv/Scripts/west.exe"
+			},
+			"osx": {
+				"command": "${userHome}/zephyrproject/.venv/bin/west"
+			},
+			"args": [
+				"build",
+				"-p",
+				"auto",
+				"-b",
+				"max32655evkit/max32655/m4",
+                "."
+			],
+			"problemMatcher": [
+				"$gcc"
+			],
+            "group": {
+				"kind": "build",
+				"isDefault": true
+			}
+        },
+        {
+            "label": "build again",
+            "type": "shell",
+            "linux": {
+				"command": "${userHome}/zephyrproject/.venv/bin/west"
+			},
+			"windows": {
+				"command": "${userHome}/zephyrproject/.venv/Scripts/west.exe"
+			},
+			"osx": {
+				"command": "${userHome}/zephyrproject/.venv/bin/west"
+			},
+			"args": [
+				"build",
+				"-c"
+			],
+			"problemMatcher": [
+				"$gcc"
+			],
+            "group": {
+				"kind": "build",
+				"isDefault": true
+			}
+        },
+        {
+            "label": "flash",
+            "type": "shell",
+            "command": "arm-none-eabi-gdb",
+            "args": [
+                "--cd=\"${workspaceFolder}\"",
+                "--se=\"build/zephyr/${config:program_file}\"",
+                "--symbols=build/zephyr/${config:symbol_file}",
+                "-x=\"${workspaceFolder}/.vscode/flash.gdb\"",
+                "--ex=\"flash_m4 ${config:OCD_path} ${config:M4_OCD_interface_file} ${config:M4_OCD_target_file}\"",
+                "--batch"
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "dependsOn":["build"]
+        },
+        {
+            "label": "flash & run",
+            "type": "shell",
+            "command": "arm-none-eabi-gdb",
+            "args": [
+                "--cd=\"${workspaceFolder}\"",
+                "--se=\"build/zephyr/${config:program_file}\"",
+                "--symbols=build/zephyr/${config:symbol_file}",
+                "-x=\"${workspaceFolder}/.vscode/flash.gdb\"",
+                "--ex=\"flash_m4_run ${config:OCD_path} ${config:M4_OCD_interface_file} ${config:M4_OCD_target_file}\"",
+                "--batch"
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "dependsOn":["build"]
+        },
+        {
+			"label": "west erase flash",
+			"type": "shell",
+			"linux": {
+				"command": "${userHome}/zephyrproject/.venv/bin/west"
+			},
+			"windows": {
+				"command": "${userHome}/zephyrproject/.venv/Scripts/west.exe"
+			},
+			"args": [
+				"flash",
+				"--openocd-search=\"${config:MAXIM_PATH}/Tools/OpenOCD/scripts\""
+			],
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+        {
+            "label": "openocd (m4)",
+            "type": "shell",
+            "command": "openocd",
+            "args": [
+                "-s",
+                "${config:OCD_path}/scripts",
+                "-f",
+                "interface/${config:M4_OCD_interface_file}",
+                "-f",
+                "target/${config:M4_OCD_target_file}",
+                "-c",
+                "\"init; reset halt\""
+            ],
+            "problemMatcher": [],
+            "dependsOn":[]
+        },
+        {
+            "label": "gdb (m4)",
+            "type": "shell",
+            "command": "arm-none-eabi-gdb",
+            "args": [
+                "--ex=\"cd ${workspaceFolder}\"",
+                "--se=\"build/zephyr/${config:program_file}\"",
+                "--symbols=build/zephyr/${config:symbol_file}",
+                "--ex=\"target remote localhost:3333\"",
+                "--ex=\"monitor reset halt\"",
+                "--ex=\"b main\"",
+                "--ex=\"c\""
+            ],
+            "problemMatcher": [],
+            "dependsOn":[]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "board",
+            "type": "promptString",
+            "default": "max32655evkit/max32655/m4",
+            "description": "See https://docs.zephyrproject.org/latest/boards/index.html"
+        },
+        {
+            "id": "pristine",
+            "type": "pickString",
+            "description": "Choose when to run a pristine build",
+            "default": "auto",
+            "options": [
+                "auto",
+                "always",
+                "never"
+            ]
+        }
+    ]
+}
